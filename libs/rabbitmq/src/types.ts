@@ -1,6 +1,8 @@
-export interface RabbitMqModuleOptions {
-  queue: string;
-}
+import { RmqOptions } from '@nestjs/microservices';
+
+export type RmqOptionsType = RmqOptions['options'];
+
+export type RabbitMqModuleOptions = RmqOptionsType & {};
 
 export interface RabbitMqModuleAsyncOptions {
   provide: string;

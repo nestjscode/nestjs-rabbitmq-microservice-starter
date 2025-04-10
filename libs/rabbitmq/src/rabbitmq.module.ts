@@ -2,7 +2,10 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 import { RabbitMqService } from './rabbitmq.service';
-import { RabbitMqModuleAsyncOptions } from './types';
+import type {
+  RabbitMqModuleAsyncOptions,
+  RabbitMqModuleOptions,
+} from './types';
 
 @Module({
   imports: [
@@ -14,7 +17,10 @@ import { RabbitMqModuleAsyncOptions } from './types';
   exports: [RabbitMqService],
 })
 export class RabbitMqModule {
-  static registerRmq(service: string, queue: string): DynamicModule {
+  static registerRmq(
+    service: string,
+    options: RabbitMqModuleOptions,
+  ): DynamicModule {
     const providers = [
       {
         provide: service,
@@ -23,18 +29,14 @@ export class RabbitMqModule {
           const PASSWORD = configService.get<string>('RABBITMQ_DEFAULT_PASS');
           const HOST = configService.get<string>('RABBITMQ_HOST');
 
-          console.log('USER', USER);
-          console.log('PASSWORD', PASSWORD);
-          console.log('HOST', HOST);
-
           return ClientProxyFactory.create({
             transport: Transport.RMQ,
             options: {
               urls: [`amqp://${USER}:${PASSWORD}@${HOST}`],
-              queue,
               queueOptions: {
                 durable: true,
               },
+              ...options,
             },
           });
         },
@@ -58,27 +60,22 @@ export class RabbitMqModule {
       {
         provide: provide,
         useFactory: async (configService: ConfigService) => {
-          const { queue } = await useFactory(configService);
+          const options = await useFactory(configService);
 
           // Retrieve configuration values from the config service
           const USER = configService.get<string>('RABBITMQ_DEFAULT_USER');
           const PASSWORD = configService.get<string>('RABBITMQ_DEFAULT_PASS');
           const HOST = configService.get<string>('RABBITMQ_HOST');
 
-          console.log('USER', USER);
-          console.log('PASSWORD', PASSWORD);
-          console.log('HOST', HOST);
-          console.log('Queue', queue);
-
           // Create and return the RabbitMQ client
           return ClientProxyFactory.create({
             transport: Transport.RMQ,
             options: {
               urls: [`amqp://${USER}:${PASSWORD}@${HOST}`],
-              queue,
               queueOptions: {
                 durable: true,
               },
+              ...options,
             },
           });
         },

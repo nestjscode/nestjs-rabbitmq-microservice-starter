@@ -13,6 +13,12 @@ import { ConfigService, ConfigModule } from '@nestjs/config';
       useFactory: (config: ConfigService) => {
         return {
           queue: config.get<string>('RABBITMQ_USER_QUEUE')!,
+          headers: {
+            'x-service-auth': config.get<string>(
+              'SERVICE_SECRET',
+              'default_secret',
+            ),
+          },
         };
       },
     }),

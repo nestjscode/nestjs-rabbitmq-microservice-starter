@@ -9,6 +9,7 @@ export class UserService {
   ) {}
 
   findOne(id: number) {
-    return this.client.send('user.get', { id: 123 });
+    console.log('getting user of ', id);
+    return this.client.send('user.get', { id: id });
   }
 }
