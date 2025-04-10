@@ -6,6 +6,7 @@ import type {
   RabbitMqModuleAsyncOptions,
   RabbitMqModuleOptions,
 } from './types';
+import { type TypeSafeClientProxy } from './proxy/typesafe-client.proxy';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ export class RabbitMqModule {
           const PASSWORD = configService.get<string>('RABBITMQ_DEFAULT_PASS');
           const HOST = configService.get<string>('RABBITMQ_HOST');
 
-          return ClientProxyFactory.create({
+          const client = ClientProxyFactory.create({
             transport: Transport.RMQ,
             options: {
               urls: [`amqp://${USER}:${PASSWORD}@${HOST}`],
@@ -38,7 +39,8 @@ export class RabbitMqModule {
               },
               ...options,
             },
-          });
+          }) as TypeSafeClientProxy;
+          return client;
         },
         inject: [ConfigService],
       },
@@ -68,7 +70,7 @@ export class RabbitMqModule {
           const HOST = configService.get<string>('RABBITMQ_HOST');
 
           // Create and return the RabbitMQ client
-          return ClientProxyFactory.create({
+          const client = ClientProxyFactory.create({
             transport: Transport.RMQ,
             options: {
               urls: [`amqp://${USER}:${PASSWORD}@${HOST}`],
@@ -77,7 +79,8 @@ export class RabbitMqModule {
               },
               ...options,
             },
-          });
+          }) as TypeSafeClientProxy;
+          return client;
         },
         inject: [...inject],
       },

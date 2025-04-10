@@ -18,6 +18,7 @@ import { ConfigService, ConfigModule } from '@nestjs/config';
               'SERVICE_SECRET',
               'default_secret',
             ),
+            //'x-service-auth': 'random-secret',
           },
         };
       },

@@ -11,7 +11,12 @@ async function bootstrap() {
 
   const queue = configService.get<string>('RABBITMQ_USER_QUEUE');
 
-  app.connectMicroservice(rabbitMqService.getRmqOptions(queue!));
+  app.connectMicroservice(
+    rabbitMqService.getRmqOptions({
+      queue: queue!,
+    }),
+  );
+
   await app.startAllMicroservices();
 }
 bootstrap();

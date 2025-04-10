@@ -1,6 +1,7 @@
 import { RmqContext, RmqOptions } from '@nestjs/microservices';
+import { RabbitMqModuleOptions } from './types';
 
 export interface RabbitMqServiceInterface {
-  getRmqOptions(queue: string): RmqOptions;
+  getRmqOptions(options: RabbitMqModuleOptions): RmqOptions;
   acknowledgeMessage(context: RmqContext): void;
 }
